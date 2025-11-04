@@ -21,7 +21,7 @@ const User = sequelize.define(
     avatar: { type: DataTypes.STRING },
     isGoogleAuth: { type: DataTypes.BOOLEAN, defaultValue: false, field: 'is_google_auth' },
     role: { type: DataTypes.ENUM("user", "admin"), defaultValue: "user" },
-    plan: { type: DataTypes.ENUM("free", "pro", "vip"), defaultValue: "free" },
+    plan: { type: DataTypes.ENUM("free", "starter", "pro", "vip"), defaultValue: "free" },
     subscriptionStatus: { type: DataTypes.STRING, defaultValue: "inactive", field: 'subscription_status' },
     stripeCustomerId: { type: DataTypes.STRING, field: 'stripe_customer_id' },
     prioritySupport: { type: DataTypes.BOOLEAN, defaultValue: false, field: 'priority_support' },

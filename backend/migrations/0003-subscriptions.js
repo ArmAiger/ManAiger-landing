@@ -14,7 +14,7 @@ module.exports = {
       },
       stripe_customer_id: S.STRING,
       stripe_price_id: S.STRING,
-      plan: { type: S.ENUM("free", "pro", "vip"), defaultValue: "free" },
+      plan: { type: S.ENUM("free", "starter", "pro", "vip"), defaultValue: "free" },
       status: S.STRING,
       current_period_end: S.DATE,
       trial_end: S.DATE,

@@ -4,7 +4,7 @@ interface User {
   id: string;
   email: string;
   name: string;
-  plan: 'free' | 'pro' | 'vip';
+  plan: 'free' | 'starter' | 'pro' | 'vip';
   subscriptionStatus?: string;
   prioritySupport?: boolean;
   company?: string;
@@ -27,7 +27,7 @@ interface ApiResponse<T = any> {
 
 interface SubscriptionData {
   status: 'active' | 'canceled' | 'past_due' | 'trialing' | 'incomplete';
-  plan: 'pro' | 'vip';
+  plan: 'starter' | 'pro' | 'vip';
   currentPeriodEnd: string;
   cancelAtPeriodEnd: boolean;
 }
@@ -477,7 +477,7 @@ class ApiClient {
   }
 
   // Billing methods
-  async subscribe(plan: 'pro' | 'vip'): Promise<ApiResponse<{ url: string }>> {
+  async subscribe(plan: 'starter' | 'pro' | 'vip'): Promise<ApiResponse<{ url: string }>> {
     const successUrl = `${window.location.origin}/payment/success?plan=${plan}`;
     const cancelUrl = `${window.location.origin}/payment/cancel`;
 
@@ -511,7 +511,11 @@ class ApiClient {
   }
 
   async createCheckoutSession(priceId: string): Promise<ApiResponse<{ url: string }>> {
-    const plan = priceId === process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO ? 'pro' : 'vip';
+    const plan = priceId === process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER
+      ? 'starter'
+      : priceId === process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO
+      ? 'pro'
+      : 'vip';
     return this.request('/api/billing/subscribe', {
       method: 'POST',
       body: JSON.stringify({

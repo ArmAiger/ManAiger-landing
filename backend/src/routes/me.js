@@ -35,7 +35,8 @@ router.get("/me/plan-usage", authenticate, async (req, res, next) => {
     const getBrandMatchLimit = (plan) => {
       switch (plan) {
         case 'free': return 3;
-        case 'pro': return 15;
+        case 'starter': return 15;
+        case 'pro': return 40;
         case 'vip': return null; // Unlimited
         default: return 3;
       }

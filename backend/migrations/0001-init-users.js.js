@@ -13,7 +13,7 @@ module.exports = {
       google_id: { type: Sequelize.STRING },
       role: { type: Sequelize.ENUM("user", "admin"), defaultValue: "user" },
       plan: {
-        type: Sequelize.ENUM("free", "pro", "vip"),
+        type: Sequelize.ENUM("free", "starter", "pro", "vip"),
         defaultValue: "free",
       },
       subscription_status: { type: Sequelize.STRING, defaultValue: "inactive" },

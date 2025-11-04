@@ -61,7 +61,8 @@ Focus on:
 
 CRITICAL: Return ONLY a valid JSON array with exactly ${count} objects. No text, no markdown, no explanations - just the JSON array starting with [ and ending with ].`;
 
-    const completion = await openai.chat.completions.create({
+    const completion = await Promise.race([
+      openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
         {
@@ -74,8 +75,12 @@ CRITICAL: Return ONLY a valid JSON array with exactly ${count} objects. No text,
         }
       ],
       temperature: 0.7,
-      max_tokens: 2000,
-    });
+        max_tokens: 1200,
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('OpenAI request timeout after 30 seconds')), 30000)
+      )
+    ]);
 
     const response = completion.choices[0]?.message?.content;
     if (!response) {
@@ -91,15 +96,27 @@ CRITICAL: Return ONLY a valid JSON array with exactly ${count} objects. No text,
         try {
           suggestions = JSON.parse(jsonMatch[0]);
         } catch (e) {
-          throw new Error('Could not parse brand suggestions from OpenAI response');
+          // salvage partial objects
+          const objectMatches = (jsonMatch[0].match(/\{[\s\S]*?\}/g) || []);
+          const partial = [];
+          for (const raw of objectMatches) {
+            try { partial.push(JSON.parse(raw)); } catch (_) {}
+          }
+          suggestions = partial;
         }
       } else {
-        throw new Error('No valid JSON array found in response');
+        // salvage partial from entire response
+        const objectMatches = (response.match(/\{[\s\S]*?\}/g) || []);
+        const partial = [];
+        for (const raw of objectMatches) {
+          try { partial.push(JSON.parse(raw)); } catch (_) {}
+        }
+        suggestions = partial;
       }
     }
 
     if (!Array.isArray(suggestions)) {
-      throw new Error('OpenAI response is not an array');
+      suggestions = [];
     }
 
     const validSuggestions = suggestions.filter(suggestion => {
@@ -113,7 +130,8 @@ CRITICAL: Return ONLY a valid JSON array with exactly ${count} objects. No text,
 
   } catch (error) {
     console.error('Error in suggestBrandsFromNiche:', error);
-    throw new Error(`Failed to generate brand suggestions: ${error.message}`);
+    // Return empty array to allow caller to continue attempts gracefully
+    return [];
   }
 }
 
@@ -434,10 +452,10 @@ CRITICAL: Return ONLY a valid JSON array with exactly ${count} objects. No text,
           }
         ],
         temperature: 0.7,
-        max_tokens: 3000,
+        max_tokens: 2200,
       }),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('OpenAI request timeout after 25 seconds')), 25000)
+        setTimeout(() => reject(new Error('OpenAI request timeout after 45 seconds')), 45000)
       )
     ]);
 
@@ -459,12 +477,28 @@ CRITICAL: Return ONLY a valid JSON array with exactly ${count} objects. No text,
           if (codeBlockMatch) {
             suggestions = JSON.parse(codeBlockMatch[1]);
           } else {
-            throw new Error(`Could not extract valid JSON from OpenAI response`);
+            // Attempt salvage: parse individual JSON objects and build a partial array
+            const objectMatches = response.match(/\{[\s\S]*?\}/g) || [];
+            const partial = [];
+            for (const raw of objectMatches) {
+              try {
+                const obj = JSON.parse(raw);
+                partial.push(obj);
+              } catch (_) {
+                // ignore individual parse failures
+              }
+            }
+            if (partial.length > 0) {
+              suggestions = partial;
+            } else {
+              throw new Error(`Could not extract valid JSON from OpenAI response`);
+            }
           }
         }
       } catch (secondParseError) {
         console.error('JSON parsing completely failed:', secondParseError.message);
-        throw new Error(`Invalid JSON response from OpenAI: ${secondParseError.message}`);
+        // Return empty array to allow caller to continue rather than hard-fail
+        return [];
       }
     }
 

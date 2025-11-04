@@ -18,7 +18,7 @@ interface UserProfile {
   phone?: string;
   avatar?: string;
   createdAt?: string;
-  plan?: 'free' | 'pro' | 'vip';
+  plan?: 'free' | 'starter' | 'pro' | 'vip';
   subscriptionStatus?: string;
   prioritySupport?: boolean;
 }
@@ -410,7 +410,8 @@ export default function SettingsPage() {
                   <div>
                     <div className="font-medium capitalize">{subscription.planName} Plan</div>
                     <div className="text-sm text-gray-600">
-                      {subscription.planName === 'free' ? 'Free' : 
+                      {subscription.planName === 'free' ? 'Free' :
+                       subscription.planName === 'starter' ? '$19/month' :
                        subscription.planName === 'pro' ? '$39/month' : '$99/month'}
                     </div>
                   </div>
@@ -430,21 +431,25 @@ export default function SettingsPage() {
                         <li>• Email support</li>
                       </>
                     )}
-                    {subscription.planName === 'pro' && (
+                    {subscription.planName === 'starter' && (
                       <>
                         <li>• 15 brand matches per month</li>
-                        <li>• Advanced analytics</li>
-                        <li>• Priority email support</li>
-                        <li>• Custom outreach templates</li>
+                        <li>• Brand profiles with website links</li>
+                        <li>• Simple tools to track who you’ve pitched</li>
+                      </>
+                    )}
+                    {subscription.planName === 'pro' && (
+                      <>
+                        <li>• 40 brand matches per month</li>
+                        <li>• Brand profiles with website links</li>
+                        <li>• Organize pitches and follow-ups in one place</li>
                       </>
                     )}
                     {subscription.planName === 'vip' && (
                       <>
                         <li>• Unlimited brand matches</li>
-                        <li>• Advanced analytics</li>
-                        <li>• Priority support</li>
-                        <li>• Custom outreach templates</li>
-                        <li>• 1-on-1 strategy sessions</li>
+                        <li>• Brand profiles with website links</li>
+                        <li>• Manage multiple creators/brands</li>
                       </>
                     )}
                   </ul>
@@ -551,6 +556,37 @@ export default function SettingsPage() {
                   </div>
                 </div>
                 
+                {/* Starter Plan */}
+                <div className={`relative flex justify-between items-center p-3 rounded ${subscription?.planName === 'starter' ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50'}`}>
+                  {/* Ribbon */}
+                  <div className="absolute -top-2 left-2">
+                    <span className="text-[10px] bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded border border-yellow-300">Most popular</span>
+                  </div>
+                  <div>
+                    <div className="font-medium flex items-center">
+                      Starter Plan
+                      {subscription?.planName === 'starter' && (
+                        <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Current</span>
+                      )}
+                    </div>
+                    <div className="text-sm text-gray-600">15 brand matches/month</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-semibold">$19/month</div>
+                    {subscription?.planName !== 'starter' && (
+                      <Button
+                        onClick={() => api.subscribe('starter').then(result => {
+                          if (result.data?.url) window.location.href = result.data.url;
+                        })}
+                        variant="secondary"
+                        className="text-xs mt-1"
+                      >
+                        {subscription?.planName === 'free' ? 'Upgrade' : 'Change'}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+                
                 {/* Pro Plan */}
                 <div className={`flex justify-between items-center p-3 rounded ${subscription?.planName === 'pro' ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50'}`}>
                   <div>
@@ -560,7 +596,7 @@ export default function SettingsPage() {
                         <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Current</span>
                       )}
                     </div>
-                    <div className="text-sm text-gray-600">15 brand matches/month</div>
+                    <div className="text-sm text-gray-600">40 brand matches/month</div>
                   </div>
                   <div className="text-right">
                     <div className="font-semibold">$39/month</div>
@@ -587,7 +623,7 @@ export default function SettingsPage() {
                         <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Current</span>
                       )}
                     </div>
-                    <div className="text-sm text-gray-600">Unlimited brand matches/month - reveal 5 at a time</div>
+                    <div className="text-sm text-gray-600">Unlimited brand matches/month</div>
                   </div>
                   <div className="text-right">
                     <div className="font-semibold">$99/month</div>

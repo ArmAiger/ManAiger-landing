@@ -18,7 +18,9 @@ async function handleSubscriptionChange(sub) {
   // Determine plan by immutable Price ID
   const priceId = sub.items.data[0]?.price?.id;
   let plan = user.plan;
-  if (priceId === stripeConfig.pricePro) {
+  if (priceId === stripeConfig.priceStarter) {
+    plan = "starter";
+  } else if (priceId === stripeConfig.pricePro) {
     plan = "pro";
   } else if (priceId === stripeConfig.priceVip) {
     plan = "vip";
@@ -50,7 +52,7 @@ async function handleSubscriptionChange(sub) {
     }
   } else if (sub.status === "active" || sub.status === "trialing") {
     // Only update plan for active subscriptions
-    if (plan === "vip" || plan === "pro") {
+    if (plan === "vip" || plan === "pro" || plan === "starter") {
       const wasFreePlan = user.plan === "free";
       user.plan = plan;
       user.prioritySupport = plan === "vip";

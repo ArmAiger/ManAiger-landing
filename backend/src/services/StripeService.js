@@ -34,7 +34,16 @@ async function subscribeUser(user, plan, successUrl, cancelUrl) {
   await clearIncompleteSubscriptions(customerId);
 
   // Get the correct price ID based on plan
-  const priceId = plan === "vip" ? stripe.priceVip : stripe.pricePro;
+  let priceId;
+  if (plan === "vip") {
+    priceId = stripe.priceVip;
+  } else if (plan === "pro") {
+    priceId = stripe.pricePro;
+  } else if (plan === "starter") {
+    priceId = stripe.priceStarter;
+  } else {
+    throw new Error("Invalid plan provided");
+  }
 
   // Create a checkout session
   const session = await _stripe.checkout.sessions.create({

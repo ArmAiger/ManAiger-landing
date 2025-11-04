@@ -23,11 +23,11 @@ router.post("/billing/clear-pending", authenticate, async (req, res, next) => {
   }
 });
 
-// Subscribe to Pro or VIP
+// Subscribe to Starter, Pro or VIP
 router.post("/billing/subscribe", authenticate, async (req, res, next) => {
   try {
     const { plan, successUrl, cancelUrl } = req.body;
-    if (!["pro", "vip"].includes(plan)) throw createError(400, "Invalid plan");
+    if (!["starter", "pro", "vip"].includes(plan)) throw createError(400, "Invalid plan");
 
     // Sync subscription status first to ensure we have the latest data
     if (req.user.stripeCustomerId) {
@@ -140,7 +140,10 @@ router.get("/billing/subscription", authenticate, async (req, res, next) => {
             req.user.prioritySupport = false;
           } else if (stripeSub.status === 'active' || stripeSub.status === 'trialing') {
             const priceId = stripeSub.items.data[0]?.price?.id;
-            if (priceId === process.env.STRIPE_PRICE_PRO) {
+            if (priceId === process.env.STRIPE_PRICE_STARTER) {
+              req.user.plan = 'starter';
+              req.user.prioritySupport = false;
+            } else if (priceId === process.env.STRIPE_PRICE_PRO) {
               req.user.plan = 'pro';
               req.user.prioritySupport = false;
             } else if (priceId === process.env.STRIPE_PRICE_VIP) {
@@ -232,7 +235,10 @@ router.post("/billing/sync", authenticate, async (req, res, next) => {
         updated = true;
       } else if (activeSub.status === 'active' || activeSub.status === 'trialing') {
         const priceId = activeSub.items.data[0]?.price?.id;
-        if (priceId === process.env.STRIPE_PRICE_PRO) {
+        if (priceId === process.env.STRIPE_PRICE_STARTER) {
+          req.user.plan = 'starter';
+          req.user.prioritySupport = false;
+        } else if (priceId === process.env.STRIPE_PRICE_PRO) {
           req.user.plan = 'pro';
           req.user.prioritySupport = false;
         } else if (priceId === process.env.STRIPE_PRICE_VIP) {

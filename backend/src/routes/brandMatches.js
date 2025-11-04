@@ -12,8 +12,10 @@ async function getBrandMatchLimit(user) {
   switch (user.plan) {
     case 'free':
       return 3; // 3 matches per month for free users
+    case 'starter':
+      return 15; // 15 matches per month for starter users
     case 'pro':
-      return 15; // 15 matches per month for pro users
+      return 40; // 40 matches per month for pro users
     case 'vip':
       return Infinity; // Unlimited for VIP users
     default:
@@ -43,8 +45,8 @@ async function enforceBrandMatchLimit(user) {
   
   if (count >= limit) {
     const upgradeMsg = user.plan === 'free' ? 
-      'Upgrade to Pro for up to 15 matches or VIP for unlimited matches.' :
-      'Upgrade to VIP for unlimited matches.';
+      'Upgrade to Starter for 15 matches, Pro for 40, or VIP for unlimited.' :
+      (user.plan === 'starter' ? 'Upgrade to Pro for 40 matches or VIP for unlimited.' : 'Upgrade to VIP for unlimited matches.');
     throw createError(
       402,
       `${user.plan.toUpperCase()} plan limit reached: ${limit} Brand Matches per month. ${upgradeMsg}`

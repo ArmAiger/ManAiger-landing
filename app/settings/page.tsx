@@ -625,13 +625,14 @@ export default function SettingsPage() {
                       </Button>
                     </>
                   )}
-                  
                   {subscription.status !== 'active' && (
                     <Button
-                      onClick={() => upgradeSubscription('price_premium')}
+                      onClick={() => api.subscribe('starter').then(result => {
+                        if (result.data?.url) window.location.href = result.data.url;
+                      })}
                       className="w-full"
                     >
-                      Upgrade to Premium
+                      Upgrade to Starter
                     </Button>
                   )}
                 </div>

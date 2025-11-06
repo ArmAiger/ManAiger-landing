@@ -307,6 +307,9 @@ export default function LandingPage() {
               <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">
                 Terms of Service
               </Link>
+              <a href="mailto:hello@manaiger.co" className="text-gray-400 hover:text-white transition-colors">
+                Contact Us
+              </a>
             </div>
           </div>
         </div>

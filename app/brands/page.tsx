@@ -978,7 +978,7 @@ Best regards`,
             {/* Content - Scrollable */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
               {/* Gmail Connection Status */}
-              <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+              {/* <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-medium text-gray-900">Email Method</h3>
                   {gmailAccount?.connected && (
@@ -1047,7 +1047,7 @@ Best regards`,
                     </div>
                   )}
                 </div>
-              </div>
+              </div> */}
 
               {/* Email To Field */}
               <div className="space-y-3">

@@ -789,7 +789,55 @@ export default function SettingsPage() {
         
         {/* Additional row for more settings if needed */}
         <div className="grid grid-cols-1 gap-6 mt-6">
-          {/* Future expansion cards can go here */}
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Contact Us</h2>
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600">
+                Need help? Have questions or feedback? We're here to assist you.
+              </p>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 bg-brand-purple/10 rounded-lg flex items-center justify-center">
+                    <svg className="w-5 h-5 text-brand-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-1">Email Support</h3>
+                    <a
+                      href="mailto:hello@manaiger.co"
+                      className="text-sm text-brand-purple hover:underline"
+                    >
+                      hello@manaiger.co
+                    </a>
+                    <p className="text-xs text-gray-500 mt-1">We typically respond within 24 hours</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 bg-brand-purple/10 rounded-lg flex items-center justify-center">
+                    <svg className="w-5 h-5 text-brand-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-1">Help Center</h3>
+                    <p className="text-sm text-gray-600">
+                      Check out our documentation and FAQs for quick answers
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="pt-4 border-t">
+                <Button
+                  onClick={() => window.location.href = 'mailto:support@manaiger.co?subject=Support Request'}
+                  variant="secondary"
+                  className="w-full sm:w-auto"
+                >
+                  Send us a message
+                </Button>
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
     </Protected>

@@ -79,13 +79,14 @@ export default function RootLayout({
           <noscript><img height="1" width="1" style={{display:'none'}} src="https://www.facebook.com/tr?id=4281371148854144&ev=PageView&noscript=1" /></noscript>
 
           {/* Meta Pixel Event Helper */}
-          <script dangerouslySetInnerHTML={{__html:`window.manaiTrack=function(e){try{
+          <script dangerouslySetInnerHTML={{__html:`window.manaiTrack=function(e,params){try{
             if(e==='account_created') fbq('track','CompleteRegistration');
             else if(e==='brand_match_viewed') fbq('trackCustom','BrandMatchViewed');
             else if(e==='brand_match_generated') fbq('trackCustom','BrandMatchGenerated');
             else if(e==='outreach_draft') fbq('trackCustom','OutreachDraftCreated');
             else if(e==='outreach_draft_sent') fbq('trackCustom','OutreachDraftSent');
             else if(e==='invoice_created') fbq('trackCustom','InvoiceCreated');
+            else if(e==='subscribe') fbq('track','Subscribe',params||{});
           }catch(_){}};`}} />
 
           {/* TikTok Pixel Code - Load pixel on every page */}

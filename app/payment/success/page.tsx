@@ -10,6 +10,7 @@ import Button from '@/components/ui/Button';
 declare global {
   interface Window {
     Rewardful?: (action: string, data?: any) => void;
+    fbq?: (action: string, event: string, params?: any) => void;
   }
 }
 
@@ -49,14 +50,33 @@ function PaymentSuccessContent() {
             localStorage.setItem('user', JSON.stringify(user));
           }
           setSubscriptionStatus('active');
-          
-          // Try alternative conversion tracking: trigger a page event that Rewardful can detect
+          const planAmounts: { [key: string]: number } = {
+            'starter': 19.00,
+            'pro': 39.00,
+            'vip': 99.00
+          };
+          const subscriptionAmount = planAmounts[subResponse.data.plan] || 0;
+          try {
+            if (typeof window !== 'undefined' && window.fbq) {
+              window.fbq('track', 'Subscribe', {
+                value: subscriptionAmount,
+                currency: 'USD'
+              });
+              console.log('[Meta Pixel] Subscribe event fired:', {
+                value: subscriptionAmount,
+                currency: 'USD',
+                plan: subResponse.data.plan
+              });
+            }
+          } catch (error) {
+            console.error('[Meta Pixel] Error firing Subscribe event:', error);
+          }
           try {
             // Method 1: Create a custom event that Rewardful might detect
             const conversionEvent = new CustomEvent('rewardful-conversion', {
               detail: {
                 email: user?.email,
-                amount: subResponse.data.plan === 'pro' ? 39.00 : 99.00,
+                amount: subscriptionAmount,
                 currency: 'USD',
                 plan: subResponse.data.plan
               }
@@ -66,7 +86,7 @@ function PaymentSuccessContent() {
             // Method 2: Create a tracking pixel with conversion data
             const trackingImg = document.createElement('img');
             trackingImg.style.display = 'none';
-            trackingImg.src = `https://track.getrewardful.com/conversion?email=${encodeURIComponent(user?.email || '')}&amount=${subResponse.data.plan === 'pro' ? 39.00 : 99.00}`;
+            trackingImg.src = `https://track.getrewardful.com/conversion?email=${encodeURIComponent(user?.email || '')}&amount=${subscriptionAmount}`;
             document.body.appendChild(trackingImg);
 
           } catch (error) {
